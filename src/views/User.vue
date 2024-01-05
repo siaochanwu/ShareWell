@@ -1,47 +1,19 @@
 <script setup>
-import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid';
-import { computed, reactive, ref, onMounted } from 'vue'
-const {VITE_API_URL} = import.meta.env
+import axios from 'axios'
+import { reactive, ref, onMounted } from 'vue'
+import UserAddButton from '../components/User/AddButton.vue'
+const { VITE_API_URL } = import.meta.env
 
-const formRef = ref();
-const visible = ref(false);
-const formState = reactive({
-  name: '',
-  nickName: '',
-  email: '',
-});
 const dataSource = ref([])
 
 onMounted(async () => {
   await fetchUsers()
 })
 
-const fetchUsers = async() => {
-  const {data} = await axios.get(`${VITE_API_URL}/users`)
+const fetchUsers = async () => {
+  const { data } = await axios.get(`${VITE_API_URL}/users`)
   dataSource.value = data.data
-  console.log('www', dataSource)
 }
-
-const onOk = () => {
-    console.log('formState: ', formState);
-    handleAdd(formState)
-    visible.value = false;
-    formRef.value.resetFields();
-
-//   formRef.value
-    // .validateFields()
-    // .then(values => {
-    //   console.log('Received values of form: ', values);
-    //   console.log('formState: ', formState);
-    //   visible.value = false;
-    //   formRef.value.resetFields();
-    //   console.log('reset formState: ', formState);
-    // })
-    // .catch(info => {
-    //   console.log('Validate Failed:', info);
-    // });
-};
 
 const columns = [
   {
@@ -67,109 +39,53 @@ const columns = [
   }
 ]
 
-// const dataSource = ref([
-//   {
-//     id: 0,
-//     name: 'Edward King 0',
-//     nickName: 'ed',
-//     email: 'London, Park Lane no. 0'
-//   },
-//   {
-//     id: 1,
-//     name: 'Edward King 1',
-//     nickName: 'ed',
-//     email: 'London, Park Lane no. 1'
-//   }
-// ])
-
 const editableData = reactive({})
 
 const edit = (id) => {
   editableData[id] = dataSource.value.filter((item) => id === item.id)[0]
 }
 
-const saveEdit = (id) => {
+const saveEdit = async (id) => {
   //update db
-  Object.assign(dataSource.value.filter(item => id === item.id)[0], editableData[id]);
-  delete editableData[id];
-};
-const cancelEdit = (id) => {
-  delete editableData[id];
-};
-
-const onDelete = (id) => {
-  dataSource.value = dataSource.value.filter((item) => item.id !== id)
+  // Object.assign(dataSource.value.filter(item => id === item.id)[0], editableData[id]);
+  const { data } = await axios.put(`${VITE_API_URL}/users/${id}`, editableData[id])
+  console.log('edit', data)
+  delete editableData[id]
+  await fetchUsers()
 }
-const handleAdd = async ({name, nickName, email}) => {
-  const newData = {
-    id: uuidv4(),
-    name: name,
-    nickName: nickName,
-    email: email
-  }
-  //create db and query again
+const cancelEdit = (id) => {
+  delete editableData[id]
+}
+
+const onDelete = async (id) => {
+  // dataSource.value = dataSource.value.filter((item) => item.id !== id)
   try {
-    console.log(newData)
-    await axios.post(`${VITE_API_URL}/users`, newData)
-    console.log('post done')
+    const { data } = await axios.delete(`${VITE_API_URL}/users/${id}`)
+    console.log('delete', data)
     await fetchUsers()
-  } catch(err) {
-    console.log(err)
+  } catch (err) {
+    console.log('err', err)
   }
 }
 </script>
 
 <template>
   <div class="user">
-    <!-- <span>This is an User page</span> -->
-    <div>
-    <a-button type="primary" @click="visible = true">Add</a-button>
-    <a-modal
-      v-model:open="visible"
-      title="Add new User"
-      ok-text="Create"
-      cancel-text="Cancel"
-      @ok="onOk"
-    >
-      <a-form ref="formRef" :model="formState" layout="vertical" name="form_in_modal">
-        <a-form-item
-          name="name"
-          label="name"
-          :rules="[{ required: true, message: 'Please input the name of user!' }]"
-        >
-          <a-input v-model:value="formState.name" />
-        </a-form-item>
-        <a-form-item
-          name="nickName"
-          label="nickName"
-          :rules="[{ required: true, message: 'Please input the nickName of user!' }]"
-        >
-          <a-input v-model:value="formState.nickName" />
-        </a-form-item>
-        <a-form-item
-          name="email"
-          label="email"
-          :rules="[{ type: 'eemail', required: true, message: 'Please input the email of user!' }]"
-        >
-          <a-input v-model:value="formState.email" />
-        </a-form-item>
-      </a-form>
-    </a-modal>
-  </div>
+    <UserAddButton @fetchData="fetchUsers" />
     <a-table bordered :data-source="dataSource" :columns="columns">
       <template #bodyCell="{ column, text, record }">
         <template v-if="column.dataIndex === 'edit'">
           <div class="editable-row-operations">
-          <span v-if="editableData[record.id]">
-            <a-typography-link @click="saveEdit(record.id)">Save</a-typography-link>
-            <a-popconfirm title="Sure to cancel?" @confirm="cancelEdit(record.id)">
-              <a>Cancel</a>
-            </a-popconfirm>
-          </span>
-          <span v-else>
-            <a @click="edit(record.id)">Edit</a>
-          </span>
-        </div>
+            <span v-if="editableData[record.id]">
+              <a-typography-link @click="saveEdit(record.id)">Save</a-typography-link>
+              <a-popconfirm title="Sure to cancel?" @confirm="cancelEdit(record.id)">
+                <a>Cancel</a>
+              </a-popconfirm>
+            </span>
+            <span v-else>
+              <a @click="edit(record.id)">Edit</a>
+            </span>
+          </div>
         </template>
         <template v-else-if="column.dataIndex === 'operation'">
           <a-popconfirm
@@ -181,17 +97,17 @@ const handleAdd = async ({name, nickName, email}) => {
           </a-popconfirm>
         </template>
         <template v-else-if="['name', 'nickName', 'email'].includes(column.dataIndex)">
-        <div>
-          <a-input
-            v-if="editableData[record.id]"
-            v-model:value="editableData[record.id][column.dataIndex]"
-            style="margin: -5px 0"
-          />
-          <template v-else>
-            {{ text }}
-          </template>
-        </div>
-      </template>
+          <div>
+            <a-input
+              v-if="editableData[record.id]"
+              v-model:value="editableData[record.id][column.dataIndex]"
+              style="margin: -5px 0"
+            />
+            <template v-else>
+              {{ text }}
+            </template>
+          </div>
+        </template>
       </template>
     </a-table>
   </div>
