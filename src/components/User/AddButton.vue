@@ -27,7 +27,7 @@ const handleAdd = async ({ name, nickName, email }) => {
     nickName: nickName,
     email: email
   }
-  if (!name || !nickName || email) {
+  if (!name || !nickName || !email) {
     alert('欄位必填')
     return
   }

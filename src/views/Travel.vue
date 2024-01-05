@@ -17,29 +17,49 @@ const fetchProjects = async () => {
     item.endDate = item.endDate.split('T')[0]
   })
   dataSource.value = data.data
+  console.log(dataSource.value)
 }
 
 const columns = [
   {
     title: 'name',
     dataIndex: 'name',
-    width: '30%'
+    width: '20%',
+    sorter: {
+      compare: (a, b) => a.name.localeCompare(b.name),
+    },
   },
   {
     title: 'startDate',
-    dataIndex: 'startDate'
+    dataIndex: 'startDate',
+    sorter: {
+      compare: (a, b) => new Date(a.startDate) - new Date(b.startDate),
+    },
   },
   {
     title: 'endDate',
-    dataIndex: 'endDate'
+    dataIndex: 'endDate',
+    sorter: {
+      compare: (a, b) => new Date(a.endDate) - new Date(b.endDate),
+    },
   },
   {
     title: 'currency',
-    dataIndex: 'currency'
+    dataIndex: 'currency',
+    sorter: {
+      compare: (a, b) => a.currency.localeCompare(b.currency),
+    },
   },
   {
     title: 'location',
-    dataIndex: 'location'
+    dataIndex: 'location',
+    sorter: {
+      compare: (a, b) => a.location.localeCompare(b.location),
+    },
+  },
+  {
+    title: 'users',
+    dataIndex: 'users'
   },
   {
     title: 'operation',
@@ -79,12 +99,16 @@ const onDelete = async (id) => {
     console.log('err', err)
   }
 }
+
+function handleTableChange(pagination, filters, sorter, extra) {
+  console.log('params', pagination, filters, sorter, extra);
+}
 </script>
 
 <template>
   <div class="travel">
     <TravelAddButton @fetchData="fetchProjects" />
-    <a-table bordered :data-source="dataSource" :columns="columns">
+    <a-table bordered :data-source="dataSource" :columns="columns" @change="handleTableChange">
       <template #bodyCell="{ column, text, record }">
         <template v-if="column.dataIndex === 'edit'">
           <div class="editable-row-operations">
@@ -108,6 +132,16 @@ const onDelete = async (id) => {
             <a>Delete</a>
           </a-popconfirm>
         </template>
+        <template v-else-if="['users'].includes(column.dataIndex)">
+          <span>
+          <a-tag
+            v-for="(user, index) in record.users"
+            :key="user"
+            :color="index %2 == 0 ? 'green' : 'geekblue'">
+            {{ user }}
+          </a-tag>
+        </span>
+        </template>
         <template
           v-else-if="
             ['name', 'startDate', 'endDate', 'currency', 'location'].includes(column.dataIndex)
@@ -119,7 +153,8 @@ const onDelete = async (id) => {
               v-model:value="editableData[record.id][column.dataIndex]"
               style="margin: -5px 0"
             />
-            <template v-else>
+            <template v-else >
+              <!-- <router-link :to="...">	 -->
               {{ text }}
             </template>
           </div>

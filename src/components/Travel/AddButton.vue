@@ -12,14 +12,16 @@ const showUsers = ref([])
 
 // const props = defineProps(['fetchUsers']);
 
-const formState = reactive({
+const initialState = {
   name: '',
   startDate: '',
   endDate: '',
   currency: 'TWD',
   location: '',
   users: []
-})
+}
+
+const formState = reactive({...initialState})
 
 onMounted(async () => {
   await fetchUsers()
@@ -44,7 +46,6 @@ const onOk = () => {
 
 const handleAdd = async (formState) => {
   const newData = formState
-
   console.log(newData)
 
   if (

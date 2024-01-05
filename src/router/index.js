@@ -17,10 +17,10 @@ const router = createRouter({
     {
       path: '/travel',
       name: 'travel',
-      component: () => import('../views/Travel.vue')
+      component: () => import('../views/Travel.vue'),
     },
     {
-      path: '/payment',
+      path: '/travel/:id',
       name: 'payment',
       component: () => import('../views/Payment.vue')
     }

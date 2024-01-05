@@ -19,15 +19,24 @@ const columns = [
   {
     title: 'name',
     dataIndex: 'name',
-    width: '30%'
+    width: '30%',
+    sorter: {
+      compare: (a, b) => a.name.localeCompare(b.name),
+    },
   },
   {
     title: 'nickName',
-    dataIndex: 'nickName'
+    dataIndex: 'nickName',
+    sorter: {
+      compare: (a, b) => a.nickName.localeCompare(b.nickName),
+    },
   },
   {
     title: 'email',
-    dataIndex: 'email'
+    dataIndex: 'email',
+    sorter: {
+      compare: (a, b) => a.email.localeCompare(b.email),
+    },
   },
   {
     title: 'operation',
