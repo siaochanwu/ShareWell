@@ -1,13 +1,13 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import { ref } from 'vue';
-const selectedKeys1 = ref(['2']);
-const selectedKeys2 = ref(['1']);
-const openKeys = ref(['sub1']);
+import { ref } from 'vue'
+const selectedKeys1 = ref(['2'])
+const selectedKeys2 = ref(['1'])
+const openKeys = ref(['sub1'])
 </script>
 
 <template>
-<a-layout>
+  <a-layout>
     <a-layout-header class="header">
       <div class="logo" />
       <a-menu
@@ -16,15 +16,12 @@ const openKeys = ref(['sub1']);
         mode="horizontal"
         :style="{ lineHeight: '64px' }"
       >
-      
-        
         <a-menu-item key="1"><RouterLink to="/user">User</RouterLink></a-menu-item>
         <a-menu-item key="2"><RouterLink to="/travel">Travel</RouterLink></a-menu-item>
-        <a-menu-item key="3"><RouterLink to="/payment">Payment</RouterLink></a-menu-item>
       </a-menu>
     </a-layout-header>
     <a-layout>
-      <a-layout-sider width="200" style="background: #fff">
+      <!-- <a-layout-sider width="200" style="background: #fff">
         <a-menu
           v-model:selectedKeys="selectedKeys2"
           v-model:openKeys="openKeys"
@@ -59,7 +56,7 @@ const openKeys = ref(['sub1']);
             
           </a-sub-menu>
         </a-menu>
-      </a-layout-sider>
+      </a-layout-sider> -->
       <a-layout style="padding: 0 24px 24px">
         <a-breadcrumb style="margin: 16px 0">
           <!-- <a-breadcrumb-item>Home</a-breadcrumb-item>
@@ -74,7 +71,6 @@ const openKeys = ref(['sub1']);
       </a-layout>
     </a-layout>
   </a-layout>
-  
 </template>
 
 <style scoped>

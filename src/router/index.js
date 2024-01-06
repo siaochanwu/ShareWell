@@ -10,6 +10,11 @@ const router = createRouter({
       component: HomeView
     },
     {
+      path: '/:pathMatch(.*)*',
+      redirect: '/user',
+      component: () => import('../views/404.vue')
+    },
+    {
       path: '/user',
       name: 'user',
       component: () => import('../views/User.vue')
@@ -17,7 +22,7 @@ const router = createRouter({
     {
       path: '/travel',
       name: 'travel',
-      component: () => import('../views/Travel.vue'),
+      component: () => import('../views/Travel.vue')
     },
     {
       path: '/travel/:id',

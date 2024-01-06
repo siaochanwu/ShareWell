@@ -26,36 +26,36 @@ const columns = [
     dataIndex: 'name',
     width: '20%',
     sorter: {
-      compare: (a, b) => a.name.localeCompare(b.name),
-    },
+      compare: (a, b) => a.name.localeCompare(b.name)
+    }
   },
   {
     title: 'startDate',
     dataIndex: 'startDate',
     sorter: {
-      compare: (a, b) => new Date(a.startDate) - new Date(b.startDate),
-    },
+      compare: (a, b) => new Date(a.startDate) - new Date(b.startDate)
+    }
   },
   {
     title: 'endDate',
     dataIndex: 'endDate',
     sorter: {
-      compare: (a, b) => new Date(a.endDate) - new Date(b.endDate),
-    },
+      compare: (a, b) => new Date(a.endDate) - new Date(b.endDate)
+    }
   },
   {
     title: 'currency',
     dataIndex: 'currency',
     sorter: {
-      compare: (a, b) => a.currency.localeCompare(b.currency),
-    },
+      compare: (a, b) => a.currency.localeCompare(b.currency)
+    }
   },
   {
     title: 'location',
     dataIndex: 'location',
     sorter: {
-      compare: (a, b) => a.location.localeCompare(b.location),
-    },
+      compare: (a, b) => a.location.localeCompare(b.location)
+    }
   },
   {
     title: 'users',
@@ -101,7 +101,7 @@ const onDelete = async (id) => {
 }
 
 function handleTableChange(pagination, filters, sorter, extra) {
-  console.log('params', pagination, filters, sorter, extra);
+  console.log('params', pagination, filters, sorter, extra)
 }
 </script>
 
@@ -134,18 +134,31 @@ function handleTableChange(pagination, filters, sorter, extra) {
         </template>
         <template v-else-if="['users'].includes(column.dataIndex)">
           <span>
-          <a-tag
-            v-for="(user, index) in record.users"
-            :key="user"
-            :color="index %2 == 0 ? 'green' : 'geekblue'">
-            {{ user }}
-          </a-tag>
-        </span>
+            <a-tag
+              v-for="(user, index) in record.users"
+              :key="user"
+              :color="index % 2 == 0 ? 'green' : 'geekblue'"
+            >
+              {{ user }}
+            </a-tag>
+          </span>
+        </template>
+        <template v-else-if="['name'].includes(column.dataIndex)">
+          <div>
+            <a-input
+              v-if="editableData[record.id]"
+              v-model:value="editableData[record.id][column.dataIndex]"
+              style="margin: -5px 0"
+            />
+            <template v-else>
+              <router-link :to="'/travel/' + `${record.id}`">
+                {{ text }}
+              </router-link>
+            </template>
+          </div>
         </template>
         <template
-          v-else-if="
-            ['name', 'startDate', 'endDate', 'currency', 'location'].includes(column.dataIndex)
-          "
+          v-else-if="['startDate', 'endDate', 'currency', 'location'].includes(column.dataIndex)"
         >
           <div>
             <a-input
@@ -153,8 +166,7 @@ function handleTableChange(pagination, filters, sorter, extra) {
               v-model:value="editableData[record.id][column.dataIndex]"
               style="margin: -5px 0"
             />
-            <template v-else >
-              <!-- <router-link :to="...">	 -->
+            <template v-else>
               {{ text }}
             </template>
           </div>
