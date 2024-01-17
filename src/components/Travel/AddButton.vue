@@ -1,6 +1,6 @@
 <script setup>
 import axios from 'axios'
-import { reactive, ref, defineEmits, defineProps, onMounted } from 'vue'
+import { reactive, ref, defineEmits, onMounted } from 'vue'
 const { VITE_API_URL } = import.meta.env
 const emit = defineEmits(['fetchData'])
 const dateFormat = 'YYYY/MM/DD'
@@ -10,7 +10,6 @@ const visible = ref(false)
 const dateRange = ref([])
 const showUsers = ref([])
 
-// const props = defineProps(['fetchUsers']);
 
 const initialState = {
   name: '',

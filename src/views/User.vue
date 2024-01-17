@@ -5,6 +5,7 @@ import UserAddButton from '../components/User/AddButton.vue'
 const { VITE_API_URL } = import.meta.env
 
 const dataSource = ref([])
+const loading = ref(true)
 
 onMounted(async () => {
   await fetchUsers()
@@ -13,6 +14,7 @@ onMounted(async () => {
 const fetchUsers = async () => {
   const { data } = await axios.get(`${VITE_API_URL}/users`)
   dataSource.value = data.data
+  loading.value = false
 }
 
 const columns = [
@@ -21,22 +23,22 @@ const columns = [
     dataIndex: 'name',
     width: '30%',
     sorter: {
-      compare: (a, b) => a.name.localeCompare(b.name),
-    },
+      compare: (a, b) => a.name.localeCompare(b.name)
+    }
   },
   {
     title: 'nickName',
     dataIndex: 'nickName',
     sorter: {
-      compare: (a, b) => a.nickName.localeCompare(b.nickName),
-    },
+      compare: (a, b) => a.nickName.localeCompare(b.nickName)
+    }
   },
   {
     title: 'email',
     dataIndex: 'email',
     sorter: {
-      compare: (a, b) => a.email.localeCompare(b.email),
-    },
+      compare: (a, b) => a.email.localeCompare(b.email)
+    }
   },
   {
     title: 'operation',
@@ -80,45 +82,53 @@ const onDelete = async (id) => {
 
 <template>
   <div class="user">
-    <UserAddButton @fetchData="fetchUsers" />
-    <a-table bordered :data-source="dataSource" :columns="columns">
-      <template #bodyCell="{ column, text, record }">
-        <template v-if="column.dataIndex === 'edit'">
-          <div class="editable-row-operations">
-            <span v-if="editableData[record.id]">
-              <a-typography-link @click="saveEdit(record.id)">Save</a-typography-link>
-              <a-popconfirm title="Sure to cancel?" @confirm="cancelEdit(record.id)">
-                <a>Cancel</a>
-              </a-popconfirm>
-            </span>
-            <span v-else>
-              <a @click="edit(record.id)">Edit</a>
-            </span>
-          </div>
+    <template v-if="loading">
+      <a-skeleton-button />
+      <br />
+      <br />
+      <a-skeleton active />
+    </template>
+    <template v-else>
+      <UserAddButton @fetchData="fetchUsers" />
+      <a-table bordered :data-source="dataSource" :columns="columns">
+        <template #bodyCell="{ column, text, record }">
+          <template v-if="column.dataIndex === 'edit'">
+            <div class="editable-row-operations">
+              <span v-if="editableData[record.id]">
+                <a-typography-link @click="saveEdit(record.id)">Save</a-typography-link>
+                <a-popconfirm title="Sure to cancel?" @confirm="cancelEdit(record.id)">
+                  <a>Cancel</a>
+                </a-popconfirm>
+              </span>
+              <span v-else>
+                <a @click="edit(record.id)">Edit</a>
+              </span>
+            </div>
+          </template>
+          <template v-else-if="column.dataIndex === 'operation'">
+            <a-popconfirm
+              v-if="dataSource.length"
+              title="Sure to delete?"
+              @confirm="onDelete(record.id)"
+            >
+              <a>Delete</a>
+            </a-popconfirm>
+          </template>
+          <template v-else-if="['name', 'nickName', 'email'].includes(column.dataIndex)">
+            <div>
+              <a-input
+                v-if="editableData[record.id]"
+                v-model:value="editableData[record.id][column.dataIndex]"
+                style="margin: -5px 0"
+              />
+              <template v-else>
+                {{ text }}
+              </template>
+            </div>
+          </template>
         </template>
-        <template v-else-if="column.dataIndex === 'operation'">
-          <a-popconfirm
-            v-if="dataSource.length"
-            title="Sure to delete?"
-            @confirm="onDelete(record.id)"
-          >
-            <a>Delete</a>
-          </a-popconfirm>
-        </template>
-        <template v-else-if="['name', 'nickName', 'email'].includes(column.dataIndex)">
-          <div>
-            <a-input
-              v-if="editableData[record.id]"
-              v-model:value="editableData[record.id][column.dataIndex]"
-              style="margin: -5px 0"
-            />
-            <template v-else>
-              {{ text }}
-            </template>
-          </div>
-        </template>
-      </template>
-    </a-table>
+      </a-table>
+    </template>
   </div>
 </template>
 
