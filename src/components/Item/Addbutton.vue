@@ -55,6 +55,7 @@ const onOk = () => {
 
 const handleAdd = async (formState) => {
   const newData = formState
+  console.log('wwwwwwww', newData)
 
   if (
     !newData.name ||

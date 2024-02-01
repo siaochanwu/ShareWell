@@ -8,7 +8,7 @@ const { VITE_API_URL } = import.meta.env
 const route = useRoute()
 const router = useRouter()
 const projectId = ref(route.params.id)
-const travelDetail = ref({})
+const projectDetail = ref({})
 const dataSource = ref([])
 const editableData = reactive({})
 const innerData = ref([])
@@ -67,9 +67,9 @@ const fetchOneProject = async (projectId) => {
   const { data } = await axios.get(`${VITE_API_URL}/projects/${projectId}`)
   console.log(data.data)
 
-  travelDetail.value = data.data
-  travelDetail.value.startDate = travelDetail.value.startDate.split('T')[0]
-  travelDetail.value.endDate = travelDetail.value.endDate.split('T')[0]
+  projectDetail.value = data.data
+  projectDetail.value.startDate = projectDetail.value.startDate.split('T')[0]
+  projectDetail.value.endDate = projectDetail.value.endDate.split('T')[0]
 }
 
 const fetchItems = async (projectId) => {
@@ -96,14 +96,15 @@ const cancelEdit = (id) => {
 
 const onDelete = async (id) => {
   try {
-    //fetch
+    const { data } = await axios.delete(`${VITE_API_URL}/items/${id}`)
+    console.log('delete', data)
+    await fetchItems(projectId.value)
   } catch (err) {
     console.log('err', err)
   }
 }
 
 const fetchItemRelation = async (itemId, payer) => {
-  console.log(111111, itemId, payer)
   const { data } = await axios.post(`${VITE_API_URL}/itemRelations`, {
     itemId,
     payer
@@ -127,15 +128,15 @@ function handleTableChange(pagination, filters, sorter, extra) {
   <div class="payment">
     <button @click="routerBack">back to last page</button>
     <a-flex style="background: #ececec; padding: 30px" options="'space-between'">
-      <a-card :title="travelDetail.name" :bordered="false" style="width: 30%; margin-right: 10px">
+      <a-card :title="projectDetail.name" :bordered="false" style="width: 30%; margin-right: 10px">
         <a-flex vertical="vertical" justify="space-between" align="alignItems">
-          <p>date range: {{ travelDetail.startDate }} - {{ travelDetail.endDate }}</p>
-          <p>location: {{ travelDetail.location }}</p>
-          <p>currency: {{ travelDetail.currency }}</p>
+          <p>date range: {{ projectDetail.startDate }} - {{ projectDetail.endDate }}</p>
+          <p>location: {{ projectDetail.location }}</p>
+          <p>currency: {{ projectDetail.currency }}</p>
         </a-flex>
         <p>users:</p>
         <ul>
-          <li v-for="item in travelDetail.users" :key="item.id">
+          <li v-for="item in projectDetail.users" :key="item.id">
             {{ item }}
           </li>
         </ul>
@@ -144,8 +145,8 @@ function handleTableChange(pagination, filters, sorter, extra) {
       <div style="width: 70%">
         <PaymentAddButton
           :projectId="projectId"
-          :startDate="travelDetail.startDate"
-          :endDate="travelDetail.endDate"
+          :startDate="projectDetail.startDate"
+          :endDate="projectDetail.endDate"
           @fetchData="fetchItems"
         />
         <a-table
@@ -198,7 +199,7 @@ function handleTableChange(pagination, filters, sorter, extra) {
             <a-list bordered :data-source="innerData">
               <template #renderItem="{ item }">
                 <a-list-item>
-                  <span style="color: red" v-if="item.name === item.payer"
+                  <span style="color: red" v-if="item.payment > 0"
                     >{{ item.name }} 應收total ${{ item.payment }}</span
                   >
                   <span style="color: green" v-else

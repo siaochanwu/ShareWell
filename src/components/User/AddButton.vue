@@ -44,7 +44,7 @@ const handleAdd = async ({ name, nickName, email }) => {
 
 <template>
   <div>
-    <a-button class="addBtn" type="primary" @click="visible = true">Add</a-button>
+    <button class="addBtn" type="primary" @click="visible = true">Add</button>
     <a-modal
       v-model:open="visible"
       title="Add new User"
@@ -80,4 +80,12 @@ const handleAdd = async ({ name, nickName, email }) => {
 </template>
 
 <style scoped>
+.addBtn {
+  background-color: cadetblue;
+  border: none;
+  border-radius: 10%;
+  padding: 10px 15px;
+  color: #fff;
+  cursor: pointer;
+}
 </style>

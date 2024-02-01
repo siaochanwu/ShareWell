@@ -1,7 +1,7 @@
 <script setup>
 import axios from 'axios'
 import { reactive, ref, onMounted } from 'vue'
-import TravelAddButton from '../components/Travel/AddButton.vue'
+import ProjectAddButton from '../components/Project/AddButton.vue'
 const { VITE_API_URL } = import.meta.env
 
 const dataSource = ref([])
@@ -113,20 +113,13 @@ function handleTableChange(pagination, filters, sorter, extra) {
       <a-skeleton active />
     </template>
     <template v-else>
-      <TravelAddButton @fetchData="fetchProjects" />
+      <h2>旅遊清單</h2>
+      <ProjectAddButton @fetchData="fetchProjects" />
       <a-table bordered :data-source="dataSource" :columns="columns" @change="handleTableChange">
         <template #bodyCell="{ column, text, record }">
           <template v-if="column.dataIndex === 'edit'">
             <div class="editable-row-operations">
-              <span v-if="editableData[record.id]">
-                <a-typography-link @click="saveEdit(record.id)">Save</a-typography-link>
-                <a-popconfirm title="Sure to cancel?" @confirm="cancelEdit(record.id)">
-                  <a>Cancel</a>
-                </a-popconfirm>
-              </span>
-              <span v-else>
-                <a @click="edit(record.id)">Edit</a>
-              </span>
+              <button>Edit</button>
             </div>
           </template>
           <template v-else-if="column.dataIndex === 'operation'">
@@ -151,30 +144,16 @@ function handleTableChange(pagination, filters, sorter, extra) {
           </template>
           <template v-else-if="['name'].includes(column.dataIndex)">
             <div>
-              <a-input
-                v-if="editableData[record.id]"
-                v-model:value="editableData[record.id][column.dataIndex]"
-                style="margin: -5px 0"
-              />
-              <template v-else>
-                <router-link :to="'/travel/' + `${record.id}`">
-                  {{ text }}
-                </router-link>
-              </template>
+              <router-link :to="'/project/' + `${record.id}`">
+                {{ text }}
+              </router-link>
             </div>
           </template>
           <template
             v-else-if="['startDate', 'endDate', 'currency', 'location'].includes(column.dataIndex)"
           >
             <div>
-              <a-input
-                v-if="editableData[record.id]"
-                v-model:value="editableData[record.id][column.dataIndex]"
-                style="margin: -5px 0"
-              />
-              <template v-else>
-                {{ text }}
-              </template>
+              {{ text }}
             </div>
           </template>
         </template>

@@ -89,6 +89,7 @@ const onDelete = async (id) => {
       <a-skeleton active />
     </template>
     <template v-else>
+      <h2>使用者清單</h2>
       <UserAddButton @fetchData="fetchUsers" />
       <a-table bordered :data-source="dataSource" :columns="columns">
         <template #bodyCell="{ column, text, record }">
@@ -114,7 +115,21 @@ const onDelete = async (id) => {
               <a>Delete</a>
             </a-popconfirm>
           </template>
-          <template v-else-if="['name', 'nickName', 'email'].includes(column.dataIndex)">
+          <template v-else-if="['name'].includes(column.dataIndex)">
+            <div>
+              <a-input
+                v-if="editableData[record.id]"
+                v-model:value="editableData[record.id][column.dataIndex]"
+                style="margin: -5px 0"
+              />
+              <template v-else>
+                <router-link :to="'/user/' + `${record.id}`">
+                  {{ text }}
+                </router-link>
+              </template>
+            </div>
+          </template>
+          <template v-else-if="[ 'nickName', 'email'].includes(column.dataIndex)">
             <div>
               <a-input
                 v-if="editableData[record.id]"

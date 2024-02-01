@@ -88,7 +88,7 @@ const handleUserChange = (user) => {
 
 <template>
   <div>
-    <a-button class="addBtn" type="primary" @click="visible = true">Add</a-button>
+    <button class="addBtn" type="primary" @click="visible = true">Add</button>
     <a-modal
       v-model:open="visible"
       title="Add new Project"
@@ -143,4 +143,12 @@ const handleUserChange = (user) => {
 </template>
 
 <style scoped>
+.addBtn {
+  background-color: rgb(223, 190, 120);
+  border: none;
+  border-radius: 10%;
+  padding: 10px 15px;
+  color: #fff;
+  cursor: pointer;
+}
 </style>

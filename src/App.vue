@@ -17,7 +17,7 @@ const openKeys = ref(['sub1'])
         :style="{ lineHeight: '64px' }"
       >
         <a-menu-item key="1"><RouterLink to="/user">User</RouterLink></a-menu-item>
-        <a-menu-item key="2"><RouterLink to="/travel">Travel</RouterLink></a-menu-item>
+        <a-menu-item key="2"><RouterLink to="/project">Project</RouterLink></a-menu-item>
       </a-menu>
     </a-layout-header>
     <a-layout>
